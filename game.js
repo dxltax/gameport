@@ -1,93 +1,95 @@
 const player = document.getElementById("player");
-const block = document.getElementById("block");
+const starsContainer = document.getElementById("stars-container");
 const scoreDisplay = document.getElementById("score");
-const highScoreDisplay = document.getElementById("high-score");
-const overlay = document.getElementById("overlay");
-const gameOverModal = document.getElementById("gameOverModal");
-const finalScore = document.getElementById("finalScore");
-const hearts = document.getElementById("hearts");
-const jumpSound = document.getElementById("jump-sound");
-const hitSound = document.getElementById("hit-sound");
-const bgMusic = document.getElementById("bg-music");
+const modeToggle = document.getElementById("mode-toggle");
+const music = document.getElementById("bg-music");
 
-let playerX = 125;
-let blockX = Math.floor(Math.random() * 6) * 50;
-let blockY = 0;
 let score = 0;
-let highScore = localStorage.getItem("highScore") || 0;
-let lives = 3;
-let speed = 4;
-let playerName = "";
-
-function drawBlock() {
-  block.style.top = `${blockY}px`;
-  block.style.left = `${blockX}px`;
-}
+let intervalId;
+let starInterval;
+let gameRunning = false;
 
 function startGame() {
-  playerName = document.getElementById("playerName").value || "Player";
-  overlay.classList.remove("show");
-  gameOverModal.classList.remove("show");
+  document.getElementById("start-screen").classList.remove("show");
+  starsContainer.innerHTML = "";
   score = 0;
-  lives = 3;
-  speed = 4;
-  blockY = 0;
-  playerX = 125;
-  bgMusic.play();
-  update();
+  gameRunning = true;
+  music.play();
+  intervalId = setInterval(updateScore, 1000);
+  starInterval = setInterval(spawnStar, 800);
+  requestAnimationFrame(moveStars);
 }
 
 function restartGame() {
+  document.getElementById("game-over-screen").classList.remove("show");
   startGame();
 }
 
-function update() {
-  if (lives <= 0) return;
+function updateScore() {
+  score++;
+  scoreDisplay.textContent = `Score: ${score}`;
+}
 
-  blockY += speed;
+function spawnStar() {
+  const star = document.createElement("div");
+  star.classList.add("star");
+  star.style.left = `${Math.random() * 100}%`;
+  star.style.top = `-20px`;
+  star.style.background = randomColor();
+  starsContainer.appendChild(star);
+}
 
-  if (blockY > 400) {
-    blockY = 0;
-    blockX = Math.floor(Math.random() * 6) * 50;
-    score++;
-    scoreDisplay.textContent = `Score: ${score}`;
-    if (score % 5 === 0) speed += 0.5;
-  }
+function moveStars() {
+  if (!gameRunning) return;
 
-  if (blockY + 50 >= 350 && blockX === playerX) {
-    hitSound.play();
-    lives--;
-    hearts.innerHTML = "❤️".repeat(lives);
-    blockY = 0;
-    blockX = Math.floor(Math.random() * 6) * 50;
-    if (lives <= 0) {
-      bgMusic.pause();
-      finalScore.innerText = `${playerName}, your score: ${score}`;
-      gameOverModal.classList.add("show");
-      if (score > highScore) {
-        localStorage.setItem("highScore", score);
-      }
+  const stars = document.querySelectorAll(".star");
+  stars.forEach((star) => {
+    const currentTop = parseFloat(star.style.top);
+    star.style.top = `${currentTop + 2}px`;
+
+    // collision check
+    const starLeft = parseFloat(star.style.left);
+    const playerLeft = player.offsetLeft;
+    const diff = Math.abs(starLeft - playerLeft) < 30;
+    const starTop = parseFloat(star.style.top);
+
+    if (diff && starTop >= window.innerHeight - 60) {
+      endGame();
     }
-  }
 
-  drawBlock();
-  requestAnimationFrame(update);
+    if (starTop > window.innerHeight) {
+      star.remove();
+    }
+  });
+
+  requestAnimationFrame(moveStars);
+}
+
+function endGame() {
+  gameRunning = false;
+  clearInterval(intervalId);
+  clearInterval(starInterval);
+  music.pause();
+  document.getElementById("finalScore").textContent = `Your Score: ${score}`;
+  document.getElementById("game-over-screen").classList.add("show");
+}
+
+function randomColor() {
+  const colors = ["#FFD700", "#FF69B4", "#00FFFF", "#7CFC00", "#FFA500"];
+  return colors[Math.floor(Math.random() * colors.length)];
 }
 
 document.addEventListener("keydown", (e) => {
-  if (lives <= 0) return;
-  if (e.key === "ArrowLeft" && playerX > 0) {
-    playerX -= 50;
-    jumpSound.play();
-  } else if (e.key === "ArrowRight" && playerX < 250) {
-    playerX += 50;
-    jumpSound.play();
+  if (!gameRunning) return;
+
+  const left = player.offsetLeft;
+  if (e.key === "ArrowLeft" && left > 10) {
+    player.style.left = `${left - 30}px`;
+  } else if (e.key === "ArrowRight" && left < window.innerWidth - 50) {
+    player.style.left = `${left + 30}px`;
   }
-  player.style.left = `${playerX}px`;
 });
 
-document.getElementById("mode-toggle").onclick = () => {
+modeToggle.onclick = () => {
   document.body.classList.toggle("light");
 };
-
-highScoreDisplay.textContent = `High Score: ${highScore}`;
