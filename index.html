@@ -3,40 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Avoid the Block – Full Version</title>
+  <title>Twinkle Run</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json" />
 </head>
 <body>
   <div id="mode-toggle">🌓</div>
-  <div class="game-container">
+
+  <div class="game-area">
     <div id="player"></div>
-    <div id="block"></div>
-    <div id="hearts"></div>
+    <div id="stars-container"></div>
+    <div id="score">Score: 0</div>
   </div>
-  <h2 id="score">Score: 0</h2>
-  <h3 id="high-score">High Score: 0</h3>
 
-  <audio id="jump-sound" src="assets/jump.mp3"></audio>
-  <audio id="hit-sound" src="assets/hit.mp3"></audio>
-  <audio id="bg-music" src="assets/bgmusic.mp3" loop></audio>
-
-  <div id="overlay" class="modal show">
+  <div id="start-screen" class="modal show">
     <div class="modal-content">
-      <h1>Avoid the Block</h1>
-      <input id="playerName" placeholder="Enter your name" />
-      <button onclick="startGame()">Start Game</button>
+      <h1>Twinkle Run ✨</h1>
+      <p>Avoid the falling stars!</p>
+      <button onclick="startGame()">Start</button>
     </div>
   </div>
 
-  <div id="gameOverModal" class="modal">
+  <div id="game-over-screen" class="modal">
     <div class="modal-content">
       <h1>Game Over</h1>
       <p id="finalScore"></p>
-      <button onclick="restartGame()">Restart</button>
+      <button onclick="restartGame()">Play Again</button>
     </div>
   </div>
 
+  <audio id="bg-music" src="assets/bgmusic.mp3" loop></audio>
   <script src="game.js"></script>
 </body>
 </html>
