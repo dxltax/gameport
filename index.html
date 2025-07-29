@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Avoid the Block – Full Version</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div id="mode-toggle">🌓</div>
+  <div class="game-container">
+    <div id="player"></div>
+    <div id="block"></div>
+    <div id="hearts"></div>
+  </div>
+  <h2 id="score">Score: 0</h2>
+  <h3 id="high-score">High Score: 0</h3>
+
+  <audio id="jump-sound" src="assets/jump.mp3"></audio>
+  <audio id="hit-sound" src="assets/hit.mp3"></audio>
+  <audio id="bg-music" src="assets/bgmusic.mp3" loop></audio>
+
+  <div id="overlay" class="modal show">
+    <div class="modal-content">
+      <h1>Avoid the Block</h1>
+      <input id="playerName" placeholder="Enter your name" />
+      <button onclick="startGame()">Start Game</button>
+    </div>
+  </div>
+
+  <div id="gameOverModal" class="modal">
+    <div class="modal-content">
+      <h1>Game Over</h1>
+      <p id="finalScore"></p>
+      <button onclick="restartGame()">Restart</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
